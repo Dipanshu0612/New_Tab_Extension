@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
-export default function InputField() {
-  const [urls, setUrls] = useState<string[]>([]);
+interface InputFieldProps {
+  addNewBackground: (newURL: string) => void;
+}
+
+export default function InputField({ addNewBackground }: InputFieldProps) {
   const [url, setUrl] = useState("");
+
   const handleSearch = () => {
     try {
       const newURL = new URL(url);
-      if (!newURL) {
-        throw new Error("Invalid URL");
-      }
       const fileExtension = (
         newURL.pathname.split(".").pop() || ""
       ).toLowerCase();
@@ -19,10 +20,8 @@ export default function InputField() {
         throw new Error("URL does not point to a valid image or GIF");
       }
 
-      document.body.style.background = `url(${newURL.href}) center/cover no-repeat`;
-      document.body.style.height = "100vh";
-      document.body.style.margin = "0";
-      localStorage.setItem("background", JSON.stringify([...urls, newURL.href.toString()]));
+      addNewBackground(newURL.href);
+
       setUrl("");
       toast.success("Background applied successfully");
     } catch (error) {
@@ -34,11 +33,6 @@ export default function InputField() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    const background = localStorage.getItem("background");
-    setUrls(background ? JSON.parse(background) : []);
-  }, []);
 
   return (
     <div className="flex items-center space-x-2 h-[6rem] w-full justify-center">
