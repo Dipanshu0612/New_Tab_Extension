@@ -5,48 +5,42 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [urls, setURLs] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  
+  useEffect(() => {
+    const storedURLs = localStorage.getItem("background");
+    const parsedURLs = storedURLs ? JSON.parse(storedURLs) : [];
+    setURLs(parsedURLs);
+    if (parsedURLs.length > 0) {
+      document.body.style.background = `url(${parsedURLs[0]}) center/cover no-repeat`;
+    }
+  }, []);
 
   useEffect(() => {
-    const currentURL = getComputedStyle(document.body).backgroundImage.slice(5,-2);
-    if (urls.length > 0 && !currentURL) {
-      document.body.style.background = `url(${urls[0]}) center/cover no-repeat`;
+    if (urls.length > 0) {
+      document.body.style.background = `url(${urls[currentIndex]}) center/cover no-repeat`;
     }
-  }, [urls]);
+  }, [urls, currentIndex]);
 
   const handleLeft = () => {
-    const currentURL = getComputedStyle(document.body).backgroundImage.slice(5,-2);
-    const currentIndex = urls.indexOf(currentURL);
-
-    if (currentIndex === -1) {
-      return;
-    }
-
-    const nextIndex = currentIndex - 1;
-    if (nextIndex >= 0) {
-      document.body.style.background = `url(${urls[nextIndex]}) center/cover no-repeat`;
-      setURLs((prev) => [...prev]);
-    }
+    setCurrentIndex((prevIndex) => {
+      const newIndex = prevIndex - 1;
+      if (newIndex >= 0) {
+        return newIndex;
+      }
+      return prevIndex;
+    });
   };
 
   const handleRight = () => {
-    const currentURL = getComputedStyle(document.body).backgroundImage.slice(5,-2);
-    const currentIndex = urls.indexOf(currentURL);
-
-    if (currentIndex === -1) {
-      return;
-    }
-
-    const nextIndex = currentIndex + 1;
-    if (nextIndex < urls.length) {
-      document.body.style.background = `url(${urls[nextIndex]}) center/cover no-repeat`;
-      setURLs((prev) => [...prev]);
-    }
+    setCurrentIndex((prevIndex) => {
+      const newIndex = prevIndex + 1;
+      if (newIndex < urls.length) {
+        return newIndex;
+      }
+      return prevIndex;
+    });
   };
-
-  useEffect(() => {
-    const storedURLs = localStorage.getItem("background");
-    setURLs(storedURLs ? JSON.parse(storedURLs) : []);
-  }, []);
 
   const addNewBackground = (newURL: string) => {
     setURLs((prevURLs) => {
@@ -54,7 +48,7 @@ function App() {
       localStorage.setItem("background", JSON.stringify(updatedURLs));
       return updatedURLs;
     });
-    document.body.style.background = `url(${newURL}) center/cover no-repeat`;
+    setCurrentIndex((prevIndex) => prevIndex + 1);
   };
 
   return (
