@@ -8,7 +8,7 @@
     "default_title": "New Tab Extension",
     "default_url": "index.html"
   },
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab","history","storage", "tabs"],
   "icons": {
     "16": "icons/icon16.png",
     "24": "icons/icon24.png",
@@ -19,5 +19,8 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "host_permissions": ["https://*/*", "http://*/*"]
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  }
 }

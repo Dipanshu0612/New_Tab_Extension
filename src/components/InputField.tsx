@@ -39,7 +39,7 @@ export default function InputField({ addNewBackground }: InputFieldProps) {
       <input
         type="text"
         placeholder="Enter the image address to apply at the background..."
-        className="bg-transparent border bg-gray-300 px-4 py-1 rounded-md w-[25%]"
+        className="border bg-transparent px-4 py-1 rounded-md w-[25%]"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
       />

@@ -6,19 +6,27 @@ import { useEffect, useState } from "react";
 function App() {
   const [urls, setURLs] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  
+
   useEffect(() => {
     const storedURLs = localStorage.getItem("background");
     const parsedURLs = storedURLs ? JSON.parse(storedURLs) : [];
     setURLs(parsedURLs);
-    if (parsedURLs.length > 0) {
-      document.body.style.background = `url(${parsedURLs[0]}) center/cover no-repeat`;
+    const index = localStorage.getItem("backgroundIndex");
+    if (!index) {
+      localStorage.setItem("backgroundIndex", "0");
+    } else {
+      setCurrentIndex(parseInt(index));
     }
+    if (parsedURLs.length > 0) {
+      document.body.style.background = `url(${parsedURLs[currentIndex]}) center/cover no-repeat`;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (urls.length > 0) {
       document.body.style.background = `url(${urls[currentIndex]}) center/cover no-repeat`;
+      localStorage.setItem("backgroundIndex", currentIndex.toString());
     }
   }, [urls, currentIndex]);
 
